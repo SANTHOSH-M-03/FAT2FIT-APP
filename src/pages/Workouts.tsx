@@ -1,4 +1,4 @@
-import { Play, Clock, Flame, ChevronRight, Search } from 'lucide-react';
+import { Play, Clock, Flame, Search } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Workouts() {

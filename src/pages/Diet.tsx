@@ -1,4 +1,4 @@
-import { UtensilsCrossed, Plus, Camera, Search, Apple, Coffee, Pizza, Salad } from 'lucide-react';
+import { Plus, Camera, Search, Apple, Coffee, Pizza, Salad } from 'lucide-react';
 
 export default function Diet() {
   const meals = [

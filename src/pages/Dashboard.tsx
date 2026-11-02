@@ -60,7 +60,6 @@ export default function Dashboard() {
   
   const startWeight = parseFloat(localStorage.getItem('startWeight') || String(currentWeight));
   const totalLoss = Math.max(0, startWeight - currentWeight);
-  const remaining = Math.max(0, currentWeight - goalWeight);
   const progress = startWeight > goalWeight && totalLoss > 0 ? Math.min(100, ((startWeight - currentWeight) / (startWeight - goalWeight)) * 100) : 0;
 
   const todaysPlan = JSON.parse(localStorage.getItem('todaysPlan') || '[]');

@@ -1,4 +1,4 @@
-import { Flame, Footprints, MapPin, Clock, TrendingUp, Dumbbell, PersonStanding } from 'lucide-react';
+import { Flame, MapPin, Clock, Dumbbell, PersonStanding } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { format, addDays, startOfWeek } from 'date-fns';
 
