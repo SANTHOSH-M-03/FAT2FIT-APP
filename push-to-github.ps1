@@ -1,81 +1,62 @@
-# CoreFit GitHub Push Script
+#!/usr/bin/env pwsh
+# Push to GitHub Script for FAT2FIT-APP
 
-Write-Host "`n=== CoreFit GitHub Push ===" -ForegroundColor Cyan
-Write-Host "This script will help you push your code to GitHub`n"
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "  FAT2FIT-APP GitHub Push Helper" -ForegroundColor Cyan
+Write-Host "========================================`n" -ForegroundColor Cyan
 
-# Check current status
-Write-Host "Checking git status..." -ForegroundColor Yellow
-git status
-
-Write-Host "`n--- Push Options ---" -ForegroundColor Green
-Write-Host "1. Push with Personal Access Token (Recommended)"
-Write-Host "2. Push with GitHub Device Code (Browser)"
-Write-Host "3. View current authentication status"
-Write-Host "4. Generate token URL"
-
-$choice = Read-Host "`nSelect option (1-4)"
-
-switch ($choice) {
-    "1" {
-        Write-Host "`nOption 1: Push with Personal Access Token" -ForegroundColor Cyan
-        Write-Host "Get your token at: https://github.com/settings/tokens" -ForegroundColor Yellow
-        Write-Host "Required scopes: repo (Full control of private repositories)`n"
-        
-        $token = Read-Host "Enter your GitHub Personal Access Token" -AsSecureString
-        $tokenPlain = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
-            [Runtime.InteropServices.Marshal]::SecureStringToBSTR($token)
-        )
-        
-        Write-Host "`nPushing to GitHub..." -ForegroundColor Green
-        git push -f "https://${tokenPlain}@github.com/SANTHOSH-M-03/FAT2FIT-APP.git" main
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "`n✅ SUCCESS! Code pushed to GitHub!" -ForegroundColor Green
-            Write-Host "View at: https://github.com/SANTHOSH-M-03/FAT2FIT-APP" -ForegroundColor Cyan
-        } else {
-            Write-Host "`n❌ Push failed. Check your token and try again." -ForegroundColor Red
-        }
-    }
-    
-    "2" {
-        Write-Host "`nOption 2: Browser Authentication" -ForegroundColor Cyan
-        Write-Host "This will open your browser for authentication...`n"
-        
-        # Try to use git credential manager
-        $env:GCM_INTERACTIVE = "always"
-        git push -f origin main
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "`n✅ SUCCESS! Code pushed to GitHub!" -ForegroundColor Green
-        }
-    }
-    
-    "3" {
-        Write-Host "`nChecking authentication..." -ForegroundColor Yellow
-        git config --list | Select-String "user\."
-        git remote -v
-    }
-    
-    "4" {
-        Write-Host "`nGitHub Personal Access Token Setup:" -ForegroundColor Cyan
-        Write-Host "1. Go to: https://github.com/settings/tokens" -ForegroundColor Yellow
-        Write-Host "2. Click 'Generate new token (classic)'"
-        Write-Host "3. Give it a name: 'CoreFit App'"
-        Write-Host "4. Select scope: 'repo' (Full control)"
-        Write-Host "5. Click 'Generate token'"
-        Write-Host "6. Copy the token (you won't see it again!)"
-        Write-Host "7. Run this script again and select option 1`n"
-        
-        $openBrowser = Read-Host "Open token page in browser? (y/n)"
-        if ($openBrowser -eq "y") {
-            Start-Process "https://github.com/settings/tokens/new"
-        }
-    }
-    
-    default {
-        Write-Host "`nInvalid option. Please run the script again." -ForegroundColor Red
-    }
+# Step 1: Clear Windows Credential Manager
+Write-Host "[1/5] Clearing cached GitHub credentials..." -ForegroundColor Yellow
+try {
+    cmdkey /delete:git:https://github.com 2>$null
+    Write-Host "  ✓ Credentials cleared" -ForegroundColor Green
+} catch {
+    Write-Host "  - No cached credentials found" -ForegroundColor Gray
 }
 
-Write-Host "`nPress any key to exit..."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# Step 2: Configure Git
+Write-Host "`n[2/5] Configuring Git user..." -ForegroundColor Yellow
+git config user.email "msanthoshkum@gmail.com"
+git config user.name "SANTHOSH-M-03"
+Write-Host "  ✓ User configured as: SANTHOSH-M-03 <msanthoshkum@gmail.com>" -ForegroundColor Green
+
+# Step 3: Show current status
+Write-Host "`n[3/5] Current commit:" -ForegroundColor Yellow
+git log --oneline -1
+Write-Host "  ✓ Ready to push" -ForegroundColor Green
+
+# Step 4: Instructions
+Write-Host "`n[4/5] Authentication Required:" -ForegroundColor Yellow
+Write-Host "  GitHub will ask for credentials. Use:" -ForegroundColor White
+Write-Host "    Username: " -NoNewline -ForegroundColor White
+Write-Host "SANTHOSH-M-03" -ForegroundColor Cyan
+Write-Host "    Password: " -NoNewline -ForegroundColor White
+Write-Host "[Your Personal Access Token]" -ForegroundColor Cyan
+Write-Host "`n  Don't have a token? Generate one at:" -ForegroundColor White
+Write-Host "  https://github.com/settings/tokens" -ForegroundColor Blue
+Write-Host "    1. Click 'Generate new token (classic)'" -ForegroundColor Gray
+Write-Host "    2. Name it 'FAT2FIT-APP'" -ForegroundColor Gray
+Write-Host "    3. Check 'repo' scope" -ForegroundColor Gray
+Write-Host "    4. Generate and copy the token" -ForegroundColor Gray
+
+Write-Host "`n[5/5] Pushing to GitHub..." -ForegroundColor Yellow
+Write-Host "========================================`n" -ForegroundColor Cyan
+
+# Step 5: Push
+git push origin main
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "`n========================================" -ForegroundColor Green
+    Write-Host "  ✓ Successfully pushed to GitHub!" -ForegroundColor Green
+    Write-Host "========================================`n" -ForegroundColor Green
+    Write-Host "Your changes are now live at:" -ForegroundColor White
+    Write-Host "https://github.com/SANTHOSH-M-03/FAT2FIT-APP`n" -ForegroundColor Blue
+} else {
+    Write-Host "`n========================================" -ForegroundColor Red
+    Write-Host "  ✗ Push failed" -ForegroundColor Red
+    Write-Host "========================================`n" -ForegroundColor Red
+    Write-Host "Troubleshooting:" -ForegroundColor Yellow
+    Write-Host "  1. Make sure you're using a Personal Access Token (not password)" -ForegroundColor White
+    Write-Host "  2. Ensure the token has 'repo' permissions" -ForegroundColor White
+    Write-Host "  3. Verify you're the owner/collaborator of the repository`n" -ForegroundColor White
+}
