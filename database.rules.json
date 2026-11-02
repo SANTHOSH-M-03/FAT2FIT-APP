@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        
+        "profile": {
+          ".validate": "newData.hasChildren(['age', 'gender', 'weight', 'height', 'activityLevel', 'goal', 'dietPreference'])"
+        }
+      }
+    }
+  }
+}
